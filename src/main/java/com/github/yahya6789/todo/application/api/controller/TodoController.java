@@ -26,6 +26,7 @@ import com.github.yahya6789.todo.application.dto.response.TodoDto;
 import com.github.yahya6789.todo.application.i18n.MessageHelper;
 import com.github.yahya6789.todo.domain.model.Todo;
 import com.github.yahya6789.todo.domain.service.TodoService;
+import com.github.yahya6789.todo.domain.shared.EntityOperation;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -43,37 +44,41 @@ public class TodoController {
 		Page<Todo> page = service.findAll(pageable);
 		PagedModel<EntityModel<TodoDto>> pagedModel = assembler.toModel(page, this::toEntityModel);
 
-		return ApiResponseFactory.success(messageHelper.getApiSuccessMessage("fetch"), pagedModel);
+		return ApiResponseFactory.success(messageHelper.getApiSuccessMessage(EntityOperation.FETCH), pagedModel);
 	}
 
 	@GetMapping("/{id}")
 	public ApiResponse<EntityModel<TodoDto>> findById(@PathVariable Long id) {
 		Todo todo = service.findById(id);
-		return ApiResponseFactory.success(messageHelper.getApiSuccessMessage("found"), toEntityModel(todo));
+		return ApiResponseFactory.success(messageHelper.getApiSuccessMessage(EntityOperation.FOUND),
+				toEntityModel(todo));
 	}
 
 	@PostMapping
 	public ApiResponse<EntityModel<TodoDto>> create(@Valid @RequestBody CreateTodoDto dto) {
 		Todo todo = service.create(dto);
-		return ApiResponseFactory.success(messageHelper.getApiSuccessMessage("create"), toEntityModel(todo));
+		return ApiResponseFactory.success(messageHelper.getApiSuccessMessage(EntityOperation.CREATE),
+				toEntityModel(todo));
 	}
 
 	@PutMapping("/{id}")
 	public ApiResponse<EntityModel<TodoDto>> update(@PathVariable Long id, @Valid @RequestBody UpdateTodoDto dto) {
 		Todo todo = service.update(id, dto);
-		return ApiResponseFactory.success(messageHelper.getApiSuccessMessage("update"), toEntityModel(todo));
+		return ApiResponseFactory.success(messageHelper.getApiSuccessMessage(EntityOperation.UPDATE),
+				toEntityModel(todo));
 	}
 
 	@DeleteMapping("/{id}")
 	public ApiResponse<Void> delete(@PathVariable Long id) {
 		service.delete(id);
-		return ApiResponseFactory.success(messageHelper.getApiSuccessMessage("delete"), null);
+		return ApiResponseFactory.success(messageHelper.getApiSuccessMessage(EntityOperation.DELETE), null);
 	}
 
 	@PatchMapping("/{id}/toggle-completed")
 	public ApiResponse<EntityModel<TodoDto>> toggleComplete(@PathVariable Long id) {
 		Todo todo = service.toggleCompleted(id);
-		return ApiResponseFactory.success(messageHelper.getApiSuccessMessage("update"), toEntityModel(todo));
+		return ApiResponseFactory.success(messageHelper.getApiSuccessMessage(EntityOperation.UPDATE),
+				toEntityModel(todo));
 	}
 
 	private EntityModel<TodoDto> toEntityModel(Todo todo) {

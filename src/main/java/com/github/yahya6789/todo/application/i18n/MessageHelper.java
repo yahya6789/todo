@@ -6,6 +6,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
+import com.github.yahya6789.todo.domain.shared.EntityOperation;
+
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -17,8 +19,8 @@ public class MessageHelper {
 	private final MessageSource messageSource;
 	private Locale locale = LocaleContextHolder.getLocale();
 
-	public String getApiSuccessMessage(String operation) {
-		return messageSource.getMessage(API_SUCCESS_CODE + operation, null, locale);
+	public String getApiSuccessMessage(EntityOperation operation) {
+		return messageSource.getMessage(API_SUCCESS_CODE + operation.getKey(), null, locale);
 	}
 
 	public String getApiRelMessage(String relKey) {
