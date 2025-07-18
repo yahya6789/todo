@@ -11,8 +11,7 @@ public enum EntityOperation {
 	FOUND("found"),
 	CREATE("create"),
 	UPDATE("update"),
-	DELETE("delete"),
-	TOGGLE_COMPLETE("toggle-complete");
+	DELETE("delete");
 
 	@Getter
 	private final String key;
