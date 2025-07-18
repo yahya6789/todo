@@ -3,6 +3,8 @@ package com.github.yahya6789.todo.application.api.controller;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import java.util.Locale;
+
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
@@ -35,13 +37,9 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/todos")
 @RequiredArgsConstructor
 public class TodoController {
-	public static final String REL_TODOS = "todos";
-	public static final String REL_TOGGLE_COMPLETED = "toggle-completed";
-	public static final String REL_UPDATE = "update";
-	public static final String REL_DELETE = "delete";
-
 	private final MessageSource messageSource;
 	private final TodoService service;
+	private Locale locale = LocaleContextHolder.getLocale();
 
 	@GetMapping
 	public ApiResponse<PagedModel<EntityModel<TodoDto>>> findAll(Pageable pageable,
@@ -49,42 +47,42 @@ public class TodoController {
 		Page<Todo> page = service.findAll(pageable);
 		PagedModel<EntityModel<TodoDto>> pagedModel = assembler.toModel(page, this::toEntityModel);
 
-		String message = messageSource.getMessage("api.success.fetch", null, LocaleContextHolder.getLocale());
+		String message = messageSource.getMessage("api.success.fetch", null, locale);
 		return ApiResponseFactory.success(message, pagedModel);
 	}
 
 	@GetMapping("/{id}")
 	public ApiResponse<EntityModel<TodoDto>> findById(@PathVariable Long id) {
 		Todo todo = service.findById(id);
-		String message = messageSource.getMessage("api.success.found", null, LocaleContextHolder.getLocale());
+		String message = messageSource.getMessage("api.success.found", null, locale);
 		return ApiResponseFactory.success(message, toEntityModel(todo));
 	}
 
 	@PostMapping
 	public ApiResponse<EntityModel<TodoDto>> create(@Valid @RequestBody CreateTodoDto dto) {
 		Todo todo = service.create(dto);
-		String message = messageSource.getMessage("api.success.create", null, LocaleContextHolder.getLocale());
+		String message = messageSource.getMessage("api.success.create", null, locale);
 		return ApiResponseFactory.success(message, toEntityModel(todo));
 	}
 
 	@PutMapping("/{id}")
 	public ApiResponse<EntityModel<TodoDto>> update(@PathVariable Long id, @Valid @RequestBody UpdateTodoDto dto) {
 		Todo todo = service.update(id, dto);
-		String message = messageSource.getMessage("api.success.update", null, LocaleContextHolder.getLocale());
+		String message = messageSource.getMessage("api.success.update", null, locale);
 		return ApiResponseFactory.success(message, toEntityModel(todo));
 	}
 
 	@DeleteMapping("/{id}")
 	public ApiResponse<Void> delete(@PathVariable Long id) {
 		service.delete(id);
-		String message = messageSource.getMessage("api.success.delete", null, LocaleContextHolder.getLocale());
+		String message = messageSource.getMessage("api.success.delete", null, locale);
 		return ApiResponseFactory.success(message, null);
 	}
 
 	@PatchMapping("/{id}/toggle-completed")
 	public ApiResponse<EntityModel<TodoDto>> toggleComplete(@PathVariable Long id) {
 		Todo todo = service.toggleCompleted(id);
-		String message = messageSource.getMessage("api.success.update", null, LocaleContextHolder.getLocale());
+		String message = messageSource.getMessage("api.success.update", null, locale);
 		return ApiResponseFactory.success(message, toEntityModel(todo));
 	}
 
@@ -93,16 +91,17 @@ public class TodoController {
 
 		EntityModel<TodoDto> model = EntityModel.of(dto,
 				linkTo(methodOn(TodoController.class).findById(dto.getId())).withSelfRel(),
-				linkTo(methodOn(TodoController.class).findAll(Pageable.unpaged(), null)).withRel(REL_TODOS));
+				linkTo(methodOn(TodoController.class).findAll(Pageable.unpaged(), null))
+						.withRel(messageSource.getMessage("api.rel.todos", null, locale)));
 
-		model.add(linkTo(methodOn(TodoController.class).toggleComplete(dto.getId())).withRel(REL_TOGGLE_COMPLETED)
-				.withType("PUT"));
+		model.add(linkTo(methodOn(TodoController.class).toggleComplete(dto.getId()))
+				.withRel(messageSource.getMessage("api.rel.toggle-completed", null, locale)).withType("PUT"));
 
 		if (!dto.isCompleted()) {
-			model.add(linkTo(methodOn(TodoController.class).update(dto.getId(), null)).withRel(REL_UPDATE)
-					.withType("PUT"));
-			model.add(
-					linkTo(methodOn(TodoController.class).delete(dto.getId())).withRel(REL_DELETE).withType("DELETE"));
+			model.add(linkTo(methodOn(TodoController.class).update(dto.getId(), null))
+					.withRel(messageSource.getMessage("api.rel.update", null, locale)).withType("PUT"));
+			model.add(linkTo(methodOn(TodoController.class).delete(dto.getId()))
+					.withRel(messageSource.getMessage("api.rel.delete", null, locale)).withType("DELETE"));
 		}
 		return model;
 	}
