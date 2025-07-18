@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -91,13 +92,13 @@ public class TodoController {
 						.withRel(messageHelper.getApiRelMessage(TodoRel.TODOS)));
 
 		model.add(linkTo(methodOn(TodoController.class).toggleComplete(dto.getId()))
-				.withRel(messageHelper.getApiRelMessage(TodoRel.TOGGLE_COMPLETED)).withType("PUT"));
+				.withRel(messageHelper.getApiRelMessage(TodoRel.TOGGLE_COMPLETED)).withType(HttpMethod.PUT.name()));
 
 		if (!dto.isCompleted()) {
 			model.add(linkTo(methodOn(TodoController.class).update(dto.getId(), null))
-					.withRel(messageHelper.getApiRelMessage(TodoRel.UPDATE)).withType("PUT"));
+					.withRel(messageHelper.getApiRelMessage(TodoRel.UPDATE)).withType(HttpMethod.PUT.name()));
 			model.add(linkTo(methodOn(TodoController.class).delete(dto.getId()))
-					.withRel(messageHelper.getApiRelMessage(TodoRel.DELETE)).withType("DELETE"));
+					.withRel(messageHelper.getApiRelMessage(TodoRel.DELETE)).withType(HttpMethod.DELETE.name()));
 		}
 		return model;
 	}
