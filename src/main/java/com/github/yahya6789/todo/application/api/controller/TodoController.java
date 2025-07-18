@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.github.yahya6789.todo.application.api.ApiResponse;
 import com.github.yahya6789.todo.application.api.ApiResponseFactory;
+import com.github.yahya6789.todo.application.api.hateoas.TodoRel;
 import com.github.yahya6789.todo.application.dto.request.CreateTodoDto;
 import com.github.yahya6789.todo.application.dto.request.UpdateTodoDto;
 import com.github.yahya6789.todo.application.dto.response.TodoDto;
@@ -87,16 +88,16 @@ public class TodoController {
 		EntityModel<TodoDto> model = EntityModel.of(dto,
 				linkTo(methodOn(TodoController.class).findById(dto.getId())).withSelfRel(),
 				linkTo(methodOn(TodoController.class).findAll(Pageable.unpaged(), null))
-						.withRel(messageHelper.getApiRelMessage("todos")));
+						.withRel(messageHelper.getApiRelMessage(TodoRel.TODOS)));
 
 		model.add(linkTo(methodOn(TodoController.class).toggleComplete(dto.getId()))
-				.withRel(messageHelper.getApiRelMessage("toggle-completed")).withType("PUT"));
+				.withRel(messageHelper.getApiRelMessage(TodoRel.TOGGLE_COMPLETED)).withType("PUT"));
 
 		if (!dto.isCompleted()) {
 			model.add(linkTo(methodOn(TodoController.class).update(dto.getId(), null))
-					.withRel(messageHelper.getApiRelMessage("update")).withType("PUT"));
+					.withRel(messageHelper.getApiRelMessage(TodoRel.UPDATE)).withType("PUT"));
 			model.add(linkTo(methodOn(TodoController.class).delete(dto.getId()))
-					.withRel(messageHelper.getApiRelMessage("delete")).withType("DELETE"));
+					.withRel(messageHelper.getApiRelMessage(TodoRel.DELETE)).withType("DELETE"));
 		}
 		return model;
 	}
