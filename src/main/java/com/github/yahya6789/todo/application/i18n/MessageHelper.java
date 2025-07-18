@@ -20,7 +20,7 @@ public class MessageHelper {
 	private Locale locale = LocaleContextHolder.getLocale();
 
 	public String getApiSuccessMessage(EntityOperation operation) {
-		return messageSource.getMessage(API_SUCCESS_CODE + operation.getKey(), null, locale);
+		return messageSource.getMessage(API_SUCCESS_CODE + operation.getName(), null, locale);
 	}
 
 	public String getApiRelMessage(String relKey) {

@@ -14,9 +14,9 @@ public enum EntityOperation {
 	DELETE("delete");
 
 	@Getter
-	private final String key;
+	private final String name;
 
-	EntityOperation(String key) {
-		this.key = key;
+	EntityOperation(String name) {
+		this.name = name;
 	}
 }
